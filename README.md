@@ -70,6 +70,8 @@ Restart the SSH service
 sudo service ssh restart
 ```
 
+`ssh` is the client that lets you connect to to a server, `sshd`is the daemon that listen for incoming connections
+
 ## Install and configure UFW (Uncomplicated Firewall)
 
 ```
@@ -120,7 +122,7 @@ sudo apt-get install libpam-pwquality
 sudo vim /etc/security/pwquality.conf
 ```
 
-append minlen to password line
+uncomment and change lines
 ```
 minlen = 10
 lcredit = -1
@@ -128,13 +130,28 @@ ucredit = -1
 dcredit = -1
 maxrepeat = 3
 usercheck = 1
+difok=7
+enforce_for_root
 ```
+found at: https://www.server-world.info/en/note?os=Debian_10&p=password
 
-rules for pw contents
+password expiration
 ```
-password    requisite         pam_pwquality.so retry=3 lcredit =-1 ucredit=-1 dcredit=-1 maxrepeat=3 usercheck=1 difok=7 enforce_for_root
+sudo vim /etc/login.defs
+PASS_MAX_DAYS 30
+PASS_MIN_DAYS 2
+PASS_WARN_AGE 7
+````
+
+this only affects new user created
+
+change for existing users (chelmerd and root)
 ```
- todo: test if root is complies
+sudo chage -M 30 chelmerd
+sudo chage -m 2 chelmerd
+sudo chage -W 7 chelmerd
+sudo chage -l chelmerd
+```
 
 ## user groups
 
@@ -216,11 +233,15 @@ who --boot | awk '{ printf "%s %s",$(NF-1),$NF }'
 
 ### LVM use
 
-```
+<!-- ```
 lvm pvdisplay | grep -- '--- Physical volume ---' | awk '{ if ($1) { print "yes";exit; } else { print "no" } }'
 ````
-`lvm pvdisplay` shows all drives that are setup with LVM with the heading "--- Physical volumes---". The -- (double dash) is used to separate options from the pattern
+`lvm pvdisplay` shows all drives that are setup with LVM with the heading "--- Physical volumes---". The -- (double dash) is used to separate options from the pattern -->
 
+```
+lsblk | grep lvm | awk '{ if ($1) { print "yes";exit; } else { print "no" } }'
+```
+look for a partition annotated with lvm
 ```
 cat /proc/misc
 ```
@@ -250,6 +271,6 @@ ip address | grep link/ether | awk '{ print $2 }
 ### Numbers of commands executed with the `sudo` program
 
 ```
-grep sudo /var/log/auth.log | wc -l
+grep -c COMMAND /var/log/auth.log
 ```
 the file records logins and as `sudo` has to login as the super user each invocation of `sudo` will be logged there

@@ -51,6 +51,63 @@ sudo usermod -aG evaluating user_name
 getent groups
 ```
 
-## Sudo
+## Hostname and partitions
 
+hostname should be login42:
+```
+hostnamectl
+```
 
+change hostname:
+```
+su -
+hostnamectl set-hostname <hostname>
+vim /etc/hosts
+reboot
+hostnamectl
+```
+
+view partitions
+```
+lsblk
+```
+
+## SUDO
+
+assign user_name to sudo group
+```
+sudo usermod -aG sudo user_name
+getent group sudo
+```
+
+## UFW
+
+check UFW
+```
+sudo /usr/sbin/ufw status
+```
+
+open port 8080
+```
+sudo ufw allow port 8080
+sudo ufw status
+```
+
+Delete rule
+```
+sudo ufw status numered
+sudo ufw delete <number>
+```
+
+## SSH
+
+check status and port config
+```
+sudo systemctl status ssh
+sudo grep Port /etc/ssh/sshd_config
+```
+
+login user_name via ssh
+```
+ssh user_name@localhost -p 4242
+```
