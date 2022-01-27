@@ -32,6 +32,16 @@ add this line
 ```
 chelmerd	ALL=(ALL) ALL
 ```
+```
+Defaults	env_reset
+Defaults	mail_badpass
+Defaults	secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Defaults	passwd_tries=3
+Defaults	badpass_message="You entered the wrong password! Please try again."
+Defaults	log_input, log_output, logfile="/var/log/sudo/sudo.log"
+Defaults	requiretty
+```
+
 
 ## install software
 
@@ -61,9 +71,14 @@ change the line #Port22 to Port 4242
 ```
 Port 4242
 ```
-Check if port settings got right
+forbid to connect as root over ssh
+```
+PermitRootLogin no
+```
+Check if settings are right
 ```
 sudo grep Port /etc/ssh/sshd_config
+sudo grep RootLogin /etc/ssh/sshd_config
 ```
 Restart the SSH service
 ```
@@ -178,9 +193,15 @@ schedule script with cron (remember to make it executable with `chmod +x`)
 ```
 crontab -e
 ```
+
 add line to execute script every 10 minutes
 ```
 */10 *  * * * /usr/local/bin/moitoring
+```
+
+this line waits 10 Minutes (600 seconds) after the server started and run the script ONCE
+```
+@reboot sleep 600; /usr/local/bin/monitoring.sh
 ```
 disable/stopping it by commenting it out
 
@@ -190,6 +211,10 @@ disable/stopping it by commenting it out
 grep 'cpu cores' /proc/cpuinfo` | cut -d ':' -f 2
 ```
 cuts at the delimiter ':' and only outputs whats in field 2 (i.e. the part after the delimiter)
+
+```
+nproc
+```
 
 ```
 grep 'processor' /proc/cpuinfo | wc -l
@@ -274,3 +299,16 @@ ip address | grep link/ether | awk '{ print $2 }
 grep -c COMMAND /var/log/auth.log
 ```
 the file records logins and as `sudo` has to login as the super user each invocation of `sudo` will be logged there
+Problem: sometimes the count get reset (probably the auth.log resets)
+
+```
+grep -c COMMAND /var/log/sudo/sudo.log
+```
+
+### Submission
+
+MacOS:
+```
+shasum /goinfre/chelmerd/<name>/*.vdi > signature.txt
+```
+remove name at the end

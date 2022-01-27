@@ -10,4 +10,4 @@ $'\n#LVM use: '`lsblk | grep lvm | awk '{ if ($1) { print "yes";exit; } else { p
 $'\n#Connections TCP: '`netstat --numeric --all --tcp | grep ESTABLISHED | wc -l` \
 $'\n#User log: '`users | wc -w` \
 $'\n#Network: IP '`hostname --all-ip-address`"("`ip address | grep link/ether | awk '{ print $2 }'`")" \
-$'\n#Sudo: '`grep -c COMMAND /var/log/auth.log` "CMD"
+$'\n#Sudo: '`grep -c COMMAND /var/log/sudo/sudo.log` "CMD"

@@ -21,6 +21,9 @@ head -n 2 /etc/os-release
 check if *user_name* belongs to *sudo* and *user42* groups
 ```
 id user_name
+groups
+getent group sudo
+getent group user42
 ```
 
 password policies:
@@ -49,6 +52,7 @@ create group *evaluating* and add *user_name* to it:
 sudo groupadd evaluating
 sudo usermod -aG evaluating user_name
 getent groups
+groups user_name
 ```
 
 ## Hostname and partitions
